@@ -1,0 +1,16 @@
+<library path="lib/libbandwidth_gui">
+	<class name="BandwidthGui" type="nimbro_topic_transport::BandwidthGui" base_class_type="rqt_gui_cpp::Plugin">
+		<description>
+			Display bandwidth information for transferred topics
+		</description>
+		<qtgui>
+			<group>
+				<label>NimbRo Network</label>
+				<icon type="theme">folder</icon>
+			</group>
+			<label>Topic Bandwidth</label>
+			<icon type="theme">network-wireless</icon>
+			<statustip>Diagnostic information</statustip>
+		</qtgui>
+	</class>
+</library>

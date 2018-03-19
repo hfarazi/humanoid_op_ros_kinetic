@@ -1,0 +1,16 @@
+<library path="lib/libtopic_gui">
+	<class name="topic_gui" type="nimbro_topic_transport::TopicGUI" base_class_type="rqt_gui_cpp::Plugin">
+		<description>
+			Display diagnostic information about the topic transport
+		</description>
+		<qtgui>
+			<group>
+				<label>NimbRo Network</label>
+				<icon type="theme">folder</icon>
+			</group>
+			<label>Topic Transport</label>
+			<icon type="theme">network-wireless</icon>
+			<statustip>Diagnostic information</statustip>
+		</qtgui>
+	</class>
+</library>
