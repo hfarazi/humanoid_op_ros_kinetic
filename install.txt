@@ -1,0 +1,41 @@
+sudo apt-get install ros-kinetic-rqt-rviz
+sudo apt-get install ros-kinetic-joy
+
+sudo apt-get install libqglviewer-dev
+sudo apt-get install libgsl0-dev
+
+sudo apt-get install ros-kinetic-gazebo-ros-control
+sudo apt-get install ros-kinetic-ros-controllers
+sudo apt-get install ros-kinetic-controller-manager
+sudo apt-get install ros-kinetic-rqt-controller-manager
+
+sudo apt-get install v4l-utils v4l2ucp v4l-conf
+sudo add-apt-repository ppa:pj-assis/ppa
+sudo apt-get update
+sudo apt-get install guvcview
+
+sudo apt-get install sshpass
+sudo apt-get install python-pip python-dev build-essential
+sudo pip install --upgrade pip
+sudo pip install --upgrade virtualenv
+sudo pip install --upgrade --no-deps --force-reinstall pexpect
+sudo pip install termcolor
+
+sudo apt-get install libncurses5-dev
+
+sudo apt-get install libx264-dev
+
+sudo apt-get install gcc-arm-none-eabi
+
+sudo apt-get install doxygen
+
+sudo apt-get install curl tshark ssh screen
+sudo apt-get install git git-gui gitk qgit
+sudo apt-get install joe vim nano kwrite kdiff3 colordiff kompare
+sudo apt-get install gdb valgrind tree htop
+
+sudo apt install libeigen2-dev
+sudo apt install libeigen3-dev
+
+
+
