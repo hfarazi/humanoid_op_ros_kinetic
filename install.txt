@@ -38,4 +38,5 @@ sudo apt install libeigen2-dev
 sudo apt install libeigen3-dev
 
 
-
+add to /etc/environment:
+LC_ALL="en_US.UTF-8"

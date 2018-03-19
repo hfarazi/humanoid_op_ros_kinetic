@@ -1,29 +1,24 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rqt_vision_module)
+
 find_package(catkin REQUIRED COMPONENTS std_msgs rqt_gui rqt_gui_cpp image_transport sensor_msgs cv_bridge message_generation)
-find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
-include(${QT_USE_FILE})
 
-qt4_wrap_cpp(MOCFILES 
-   include/${PROJECT_NAME}/main.hpp
-   include/${PROJECT_NAME}/layout.hpp
-)
-qt4_wrap_ui(UIFILES 
-   src/${PROJECT_NAME}/main.ui
-)
-add_library(${PROJECT_NAME}
-   src/${PROJECT_NAME}/main.cpp
-   src/${PROJECT_NAME}/layout.cpp
-   ${MOCFILES}
-   ${UIFILES}
-)
-include_directories(include 
-   ${catkin_INCLUDE_DIRS} 
-   ${CMAKE_CURRENT_BINARY_DIR} 
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   )
+# Decide on a Qt version
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+    set(USE_QT5 true)
+else()
+    set(USE_QT5 false)
+endif()
 
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
+# Find Qt
+if(USE_QT5)
+    find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES})
+else()
+    find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+    include(${QT_USE_FILE})
+endif()
 
 catkin_python_setup()
    
@@ -36,13 +31,37 @@ generate_messages(
   DEPENDENCIES
   std_msgs
 )
-   
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES ${PROJECT_NAME}
    CATKIN_DEPENDS rqt_gui rqt_gui_cpp image_transport sensor_msgs cv_bridge message_runtime
 )
+
+if(USE_QT5)
+    qt5_wrap_cpp(MOCFILES include/${PROJECT_NAME}/main.hpp include/${PROJECT_NAME}/layout.hpp)
+    qt5_wrap_ui(UIFILES src/${PROJECT_NAME}/main.ui)
+else()
+    qt4_wrap_cpp(MOCFILES include/${PROJECT_NAME}/main.hpp include/${PROJECT_NAME}/layout.hpp)
+    qt4_wrap_ui(UIFILES src/${PROJECT_NAME}/main.ui)
+endif()
+
+add_library(${PROJECT_NAME}
+   src/${PROJECT_NAME}/main.cpp
+   src/${PROJECT_NAME}/layout.cpp
+   ${MOCFILES}
+   ${UIFILES}
+)
+include_directories(include 
+   ${catkin_INCLUDE_DIRS} 
+   ${CMAKE_CURRENT_BINARY_DIR} 
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   )
+
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
+   
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_LIBRARIES})
+
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
 

@@ -4,10 +4,24 @@ project(control_widget)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp config_server nimbro_op_interface rqt_gui rqt_gui_cpp message_generation)
+find_package(catkin REQUIRED COMPONENTS roscpp config_server nimbro_op_interface rqt_gui rqt_gui_cpp message_generation robotcontrol gait_msgs)
 
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
-include(${QT_USE_FILE})
+# Decide on a Qt version
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+    set(USE_QT5 true)
+else()
+    set(USE_QT5 false)
+endif()
+
+# Find Qt
+if(USE_QT5)
+    find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES})
+else()
+    find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+    include(${QT_USE_FILE})
+endif() 
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -30,14 +44,14 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
-qt4_wrap_ui(UIFILES
-  include/control_widget/controlwidget.ui
-)
+if(USE_QT5)
+    qt5_wrap_ui(UIFILES include/control_widget/controlwidget.ui)
+    qt5_wrap_cpp(MOCFILES include/control_widget/controlwidget.h include/control_widget/controlbutton.h)
+else()
+    qt4_wrap_ui(UIFILES include/control_widget/controlwidget.ui)
+    qt4_wrap_cpp(MOCFILES include/control_widget/controlwidget.h include/control_widget/controlbutton.h)
+endif()
 
-qt4_wrap_cpp(MOCFILES
-  include/control_widget/controlwidget.h
-  include/control_widget/controlbutton.h
-)
 ## Declare a cpp library
 add_library(control_widget
   ${UIFILES}
@@ -47,11 +61,8 @@ add_library(control_widget
   src/service.cpp
 )
 
-## Declare a cpp executable
-# add_executable(walk_control_node src/walk_control_node.cpp)
-
 ## Add dependencies to the executable
-add_dependencies(control_widget gait_msgs_gencpp)
+add_dependencies(control_widget gait_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(control_widget
@@ -62,13 +73,6 @@ target_link_libraries(control_widget
 #############
 ## Install ##
 #############
-
-## Mark executable scripts (Python etc.) for installation
-## not required for python when using catkin_python_setup()
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
 
 ## Mark executables and/or libraries for installation
 install(TARGETS control_widget

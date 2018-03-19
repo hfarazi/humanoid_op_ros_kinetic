@@ -6,40 +6,25 @@ project(diagnostics)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS roscpp rqt_gui rqt_gui_cpp robotcontrol actionlib)
 
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
-include(${QT_USE_FILE})
+# Decide on a Qt version
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+    set(USE_QT5 true)
+else()
+    set(USE_QT5 false)
+endif()
+
+# Find Qt
+if(USE_QT5)
+    find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES})
+else()
+    find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+    include(${QT_USE_FILE})
+endif()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and scripts declared therein get installed
-# catkin_python_setup()
-
-#######################################
-## Declare ROS messages and services ##
-#######################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
 
 ###################################################
 ## Declare things to be passed to other projects ##
@@ -64,13 +49,13 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
-qt4_wrap_ui(UIC_FILES
-	src/diagnostics.ui
-)
-
-qt4_wrap_cpp(MOC_FILES
-	include/diagnostics/diagnostics.h
-)
+if(USE_QT5)
+    qt5_wrap_ui(UIC_FILES src/diagnostics.ui)
+    qt5_wrap_cpp(MOC_FILES include/diagnostics/diagnostics.h)
+else()
+    qt4_wrap_ui(UIC_FILES src/diagnostics.ui)
+    qt4_wrap_cpp(MOC_FILES include/diagnostics/diagnostics.h)
+endif()
 
 ## Declare a cpp library
 add_library(diagnostics
@@ -95,13 +80,6 @@ target_link_libraries(diagnostics
 ## Install ##
 #############
 
-## Mark executable scripts (Python etc.) for installation
-## not required for python when using catkin_python_setup()
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
 ## Mark executables and/or libraries for installation
 install(TARGETS diagnostics
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -112,30 +90,3 @@ install(TARGETS diagnostics
 install(FILES plugin_rqt_gui.xml
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_diagnostics.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)

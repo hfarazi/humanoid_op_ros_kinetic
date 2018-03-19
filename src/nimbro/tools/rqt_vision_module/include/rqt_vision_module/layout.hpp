@@ -33,7 +33,7 @@ public:
 
 	QList<QString> listText;
 
-	RatioLayoutedFrame(QWidget* parent, Qt::WFlags flags = 0);
+	RatioLayoutedFrame(QWidget* parent, Qt::WindowFlags flags = 0);
 
 	virtual ~RatioLayoutedFrame();
 
