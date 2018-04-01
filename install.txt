@@ -36,7 +36,9 @@ sudo apt-get install gdb valgrind tree htop
 
 sudo apt install libeigen2-dev
 sudo apt install libeigen3-dev
-
+sudo apt install ros-kinetic-rqt-tf-tree
 
 add to /etc/environment:
 LC_ALL="en_US.UTF-8"
+
+
