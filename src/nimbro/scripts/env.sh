@@ -30,7 +30,7 @@ function _fadetorque() {
 }
 
 function _headcontrol() {
-	rostopic pub --once /robotcontrol/headcontrol/target head_control/LookAtTarget "{enabled: $1, is_angular_data: $2, is_relative: $3, vec: {x: $4, y: $5, z: $6}, pitchEffort: $7, yawEffort: $8}"
+	rostopic pub --once /headcontrol/target head_control/LookAtTarget "{enabled: $1, is_angular_data: $2, is_relative: $3, vec: {x: $4, y: $5, z: $6}, pitchEffort: $7, yawEffort: $8}"
 }
 
 function _gaitcmd() {
