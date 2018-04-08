@@ -8,11 +8,18 @@ sudo apt-get install ros-kinetic-gazebo-ros-control
 sudo apt-get install ros-kinetic-ros-controllers
 sudo apt-get install ros-kinetic-controller-manager
 sudo apt-get install ros-kinetic-rqt-controller-manager
+sudo apt install ros-kinetic-rosbridge-server
+sudo apt install ros-kinetic-tf2-web-republisher
+sudo apt install ros-kinetic-video-stream-opencv
+sudo apt install ros-kinetic-webtest
+sudo apt install ros-kinetic-web-video-serve
+srudo apt-get install ros-kinetic-dynamixel-controllers
 
 sudo apt-get install v4l-utils v4l2ucp v4l-conf
 sudo add-apt-repository ppa:pj-assis/ppa
 sudo apt-get update
 sudo apt-get install guvcview
+sudo apt-get install ros-kinetic-usb-cam
 
 sudo apt-get install sshpass
 sudo apt-get install python-pip python-dev build-essential
@@ -20,7 +27,13 @@ sudo pip install --upgrade pip
 sudo pip install --upgrade virtualenv
 sudo pip install --upgrade --no-deps --force-reinstall pexpect
 sudo pip install termcolor
+sudo pip install ptyprocess
+sudo pip install ansi2html
+sudo pip install flask
+sudo pip install butterfly
 
+
+sudo apt-get install python-webpy
 sudo apt-get install libncurses5-dev
 
 sudo apt-get install libx264-dev
