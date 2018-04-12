@@ -135,10 +135,10 @@ QVariant Plot::displayData(int role) const
 
 void Plot::draw(QPainter* painter, const ros::Time& base, const QRectF& rect, bool dots) const
 {
-	painter->setPen(m_color);
-	painter->setBrush(m_color);
+	painter->setPen(QPen(m_color, 0.0));
+	painter->setBrush(QBrush(m_color));
 
-	QPen pen(m_color);
+	QPen pen(m_color, 0.0);
 	double scale_x = 1.0 / fabs(painter->transform().m11());
 	double scale_y = 1.0 / fabs(painter->transform().m22());
 

@@ -11,8 +11,23 @@ find_package(catkin REQUIRED COMPONENTS
 
 include_directories(${catkin_INCLUDE_DIRS})
 
-find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtWebKit QtDBus)
-include(${QT_USE_FILE})
+# Decide on a Qt version
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+	set(USE_QT5 true)
+else()
+	set(USE_QT5 false)
+endif()
+
+# Find Qt
+if(USE_QT5)
+	find_package(Qt5Widgets REQUIRED)
+	find_package(Qt5WebKitWidgets REQUIRED)
+	find_package(Qt5DBus REQUIRED)
+	set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES} ${Qt5DBus_LIBRARIES})
+else()
+	find_package(Qt4 COMPONENTS QtCore QtGui QtWebKit QtDBus REQUIRED)
+	include(${QT_USE_FILE})
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
@@ -20,11 +35,10 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} src)
 
 catkin_package()
 
-qt4_wrap_ui(UI_HDRS
+set(UI_FILES
 	src/rqt_log_viewer.ui
 )
-
-qt4_wrap_cpp(MOC_SRCS
+set(H_FILES
 	src/log_model.h
 	src/rqt_log_viewer.h
 	src/log_view.h
@@ -38,9 +52,17 @@ qt4_wrap_cpp(MOC_SRCS
 	src/editors/kdevelop.h
 )
 
+if(USE_QT5)
+	qt5_wrap_ui(UIC_FILES ${UI_FILES})
+	qt5_wrap_cpp(MOC_FILES ${H_FILES})
+else()
+	qt4_wrap_ui(UIC_FILES ${UI_FILES})
+	qt4_wrap_cpp(MOC_FILES ${H_FILES})
+endif()
+
 add_library(rqt_log_viewer
-	${MOC_SRCS}
-	${UI_HDRS}
+	${UIC_FILES}
+	${MOC_FILES}
 	src/rqt_log_viewer.cpp
 	src/log_model.cpp
 	src/log_view.cpp

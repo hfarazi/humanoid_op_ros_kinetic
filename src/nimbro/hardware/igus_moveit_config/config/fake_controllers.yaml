@@ -1,0 +1,12 @@
+controller_list:
+  - name: fake_left_leg_controller
+    joints:
+      - left_hip_yaw
+      - left_hip_roll
+      - left_hip_pitch
+      - left_knee_pitch
+      - left_ankle_pitch
+      - left_ankle_roll
+  - name: fake_left_foot_group_controller
+    joints:
+      - left_ankle_roll

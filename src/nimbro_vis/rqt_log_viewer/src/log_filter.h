@@ -4,7 +4,7 @@
 #ifndef LOG_FILTER_H
 #define LOG_FILTER_H
 
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 #include <vector>
 

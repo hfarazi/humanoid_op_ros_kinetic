@@ -7,11 +7,11 @@
 #include <QtCore/QEvent>
 #include <QtCore/QDebug>
 
-#include <QtGui/QPainter>
-#include <QtGui/QScrollBar>
-#include <QtGui/QResizeEvent>
-#include <QtGui/QSortFilterProxyModel>
-#include <QtGui/QApplication>
+#include <QPainter>
+#include <QScrollBar>
+#include <QResizeEvent>
+#include <QSortFilterProxyModel>
+#include <QApplication>
 
 #include <ros/assert.h>
 
@@ -353,7 +353,7 @@ int LogView::numLinesForText(const QString& text)
 		text
 	);
 
-	return bbox.height() / m_lineSpacing;
+	return (bbox.height() + (m_lineSpacing-1)) / m_lineSpacing;
 }
 
 void LogView::calculateMessageHeights()

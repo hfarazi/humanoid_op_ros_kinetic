@@ -3,7 +3,7 @@
 
 #include "combobox_delegate.h"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 Q_DECLARE_METATYPE(QModelIndex)
 

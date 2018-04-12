@@ -4,7 +4,7 @@
 #ifndef LOG_VIEW_H
 #define LOG_VIEW_H
 
-#include <QtGui/QAbstractItemView>
+#include <QAbstractItemView>
 #include <QtCore/QTimer>
 
 namespace rqt_log_viewer

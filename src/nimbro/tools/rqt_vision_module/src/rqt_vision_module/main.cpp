@@ -38,27 +38,23 @@ void ImageView::initPlugin(qt_gui_cpp::PluginContext& context)
 				widget_->windowTitle() + " ("
 						+ QString::number(context.serialNumber()) + ")");
 	}
+	
 	context.addWidget(widget_);
 	ui_.image_frame->installEventFilter(this);
 	ui_.image_frame->setMouseTracking(true);
 	ui_.topics_combo_box->setCurrentIndex(ui_.topics_combo_box->findText(""));
-	connect(ui_.topics_combo_box, SIGNAL(currentIndexChanged(int)), this,
-			SLOT(onTopicChanged(int)));
+	connect(ui_.topics_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(onTopicChanged(int)));
 
 	ui_.refresh_topics_push_button->setIcon(QIcon::fromTheme("view-refresh"));
-	connect(ui_.refresh_topics_push_button, SIGNAL(pressed()), this,
-			SLOT(updateTopicList()));
+	connect(ui_.refresh_topics_push_button, SIGNAL(pressed()), this, SLOT(updateTopicList()));
 
 	ui_.zoom_1_push_button->setIcon(QIcon::fromTheme("zoom-original"));
-	connect(ui_.zoom_1_push_button, SIGNAL(toggled(bool)), this,
-			SLOT(onZoom1(bool)));
+	connect(ui_.zoom_1_push_button, SIGNAL(toggled(bool)), this, SLOT(onZoom1(bool)));
 
-	connect(ui_.dynamic_range_check_box, SIGNAL(toggled(bool)), this,
-			SLOT(onDynamicRange(bool)));
+	connect(ui_.dynamic_range_check_box, SIGNAL(toggled(bool)), this, SLOT(onDynamicRange(bool)));
 
 	ui_.save_as_image_push_button->setIcon(QIcon::fromTheme("image-x-generic"));
-	connect(ui_.save_as_image_push_button, SIGNAL(pressed()), this,
-			SLOT(saveImage()));
+	connect(ui_.save_as_image_push_button, SIGNAL(pressed()), this, SLOT(saveImage()));
 
 	// set topic name if passed in as argument
 	const QStringList& argv = context.argv();
@@ -90,9 +86,10 @@ void ImageView::initPlugin(qt_gui_cpp::PluginContext& context)
 	gui_event_publisher = nh.advertise<rqt_vision_module::GuiEvent>("/rqt_vision_module/gui_events", 1);
 	
 	// Set up connections
-	connect(ui_.image_frame, SIGNAL(mouseEvent(MouseEvent,float,float))
-				, this, SLOT(onMouseEvent(MouseEvent,float,float)));
+	qRegisterMetaType<QTextCursor>("QTextCursor");
+	qRegisterMetaType<QTextCharFormat>("QTextCharFormat");
 	
+	connect(ui_.image_frame, SIGNAL(mouseEvent(MouseEvent,float,float)), this, SLOT(onMouseEvent(MouseEvent,float,float)));
 	connect(ui_.clear_console_button, SIGNAL(clicked(bool)), this, SLOT(clearConsole()));
 	
 	updateTopicList();
@@ -108,7 +105,7 @@ void ImageView::consoleMsgReceived(const rqt_vision_module::ConsoleMsgConstPtr &
 	int scroll_bar_pos = ui_.textBrowser->verticalScrollBar()->value();
 	
 	// Split by 'new line' character
-	QStringList pieces = text.split("\r\n");
+	QStringList pieces = text.split("\r\n"); //Use <br/>
 	
 	ui_.textBrowser->moveCursor(QTextCursor::End);
 	ui_.textBrowser->insertHtml(prepareForConsole(pieces.first(), msg->r, msg->g, msg->b, msg->font_size));

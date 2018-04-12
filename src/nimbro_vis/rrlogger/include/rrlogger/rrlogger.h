@@ -1,6 +1,5 @@
 // Maintain a round robin of logging ROS bags
 // Author: Philipp Allgeuer <pallgeuer@ais.uni-bonn.de>
-//         Sebastian Schüller <schuell1@cs.uni-bonn.de>
 
 // Ensure header is only included once
 #ifndef RRLOGGER_H
@@ -23,18 +22,24 @@ namespace rrlogger
 	// Round robin logger class
 	class RRLogger
 	{
+	private:
+		// Node handle
+		ros::NodeHandle m_nhs;
+
 	public:
 		// Constants
-		static const std::string PLOT_TOPIC;
-		static const std::string TF_TOPIC;
+		const std::string PLOT_TOPIC;
+		const std::string TF_TOPIC;
+		const std::string RESOURCE_PATH;
+		const std::string CONFIG_PARAM_PATH;
 
 		// Constructor/destructor
-		RRLogger();
+		explicit RRLogger(const std::string& loggerType);
 		virtual ~RRLogger();
 
 		// Reset functions
-		void reset();
-		void resetConfig();
+		void reset(const std::string& loggerType);
+		void resetConfig(const std::string& loggerType);
 
 		// Initialisation function
 		void init(bool init = true);
@@ -42,13 +47,13 @@ namespace rrlogger
 		// Configuration set functions
 		std::size_t configureMaxNumBags(std::size_t maxNumBags) { m_maxNumBags = (maxNumBags > MAX_MAX_NUM_BAGS ? MAX_MAX_NUM_BAGS : (maxNumBags < 1 ? MAX_MAX_NUM_BAGS : maxNumBags)); return m_maxNumBags; } // Note: Passing 0 sets the limit to MAX_MAX_NUM_BAGS
 		std::size_t configureMaxTotalMB(std::size_t maxTotalMB) { m_maxTotalMB = (maxTotalMB > MAX_MAX_TOTAL_MB ? MAX_MAX_TOTAL_MB : (maxTotalMB < 1 ? MAX_MAX_TOTAL_MB : maxTotalMB)); return m_maxTotalMB; } // Note: Passing 0 sets the limit to MAX_MAX_TOTAL_MB
-		std::string configurePrefix(const std::string& prefix) { m_prefix = (prefix.empty() ? "rrlogger" : prefix); return m_prefix; }
+		std::string configureLoggerType(const std::string& loggerType) { m_loggerType = (loggerType.empty() ? "rrlogger" : loggerType); return m_loggerType; }
 		double configureHeartbeat(bool enabled, double timeout, bool optional = false) { setHeartbeatParam(enabled, timeout, optional); return m_heartbeatTimeout; }
 
 		// Configuration get functions
 		std::size_t getMaxNumBags() const { return m_maxNumBags; }
 		std::size_t getMaxTotalMB() const { return m_maxTotalMB; }
-		std::string getPrefix() const { return m_prefix; }
+		std::string getLoggerType() const { return m_loggerType; }
 		bool getHeartbeatEnabled() const { return m_heartbeatEnabled; }
 		bool getHeartbeatOptional() const { return m_heartbeatOptional; }
 		double getHeartbeatTimeout() const { return m_heartbeatTimeout; }
@@ -86,9 +91,6 @@ namespace rrlogger
 		static const std::size_t WARN_BAGS_NUM;
 		static const double WARN_BAGS_SEC;
 		static const std::size_t MAX_HEARTBEAT_SOURCES;
-
-		// Node handle
-		ros::NodeHandle m_nh;
 
 		// Config server parameters
 		config_server::Parameter<bool> m_confEnable;
@@ -159,7 +161,7 @@ namespace rrlogger
 		// Logger configuration
 		std::size_t m_maxNumBags;
 		std::size_t m_maxTotalMB;
-		std::string m_prefix;
+		std::string m_loggerType;
 		bool m_heartbeatEnabled;   // Set exclusively by setHeartbeatParam()
 		bool m_heartbeatOptional;  // Set exclusively by setHeartbeatParam()
 		double m_heartbeatTimeout; // Set exclusively by setHeartbeatParam()

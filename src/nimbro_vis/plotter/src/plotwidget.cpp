@@ -405,7 +405,7 @@ void PlotWidget::drawLegend(QPainter* painter, const Plot* plot)
 	{
 		painter->setPen(QPen(plot->color(), 2.0));
 		painter->drawLine(QPoint(0, 1), QPoint(10, 1));
-		painter->setPen(Qt::black);
+		painter->setPen(QPen(Qt::black, 0.0));
 
 		double val;
 		if(!m_fixedTime.isZero() || m_mousePresent)
@@ -457,6 +457,7 @@ void PlotWidget::paintEvent(QPaintEvent* )
 
 	// Prepare the basic painter colors and pen.
 	QPen pen = QPen(QColor(0, 0, 0));
+	pen.setWidth(0.0);
 	pen.setCosmetic(true);
 	painter.setPen(pen);
 	painter.setFont(m_font_default);
@@ -519,7 +520,7 @@ void PlotWidget::paintEvent(QPaintEvent* )
 	}
 
 	// Draw fixed time marker
-	painter.setPen(Qt::black);
+	painter.setPen(QPen(Qt::black, 0.0));
 	if(!m_fixedTime.isZero())
 	{
 		double sec = (m_fixedTime - now).toSec();

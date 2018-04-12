@@ -4,7 +4,7 @@
 #ifndef MESSAGE_DISPLAY_H
 #define MESSAGE_DISPLAY_H
 
-#include <QtWebKit/QWebView>
+#include <QWebView>
 
 #include <rosgraph_msgs/Log.h>
 

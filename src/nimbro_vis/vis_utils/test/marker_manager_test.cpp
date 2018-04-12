@@ -25,13 +25,13 @@ TEST(MarkersTest, test_MarkerManager)
 	MarkerManager MM7("~markers");
 	
 	// Test the marker manager topic naming
-	EXPECT_STREQ("/marker_manager_test/vis_marker_array", MM1.getTopicName().c_str());
-	EXPECT_STREQ("/marker_manager_test/vis_marker_array", MM2.getTopicName().c_str());
-	EXPECT_STREQ("/marker_manager_test/vis_marker_array", MM3.getTopicName().c_str());
-	EXPECT_STREQ("node1_markers", MM4.getTopicName().c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/vis_marker_array", MM1.getTopicName().c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/vis_marker_array", MM2.getTopicName().c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/vis_marker_array", MM3.getTopicName().c_str());
+	EXPECT_STREQ("/myns/node1_markers", MM4.getTopicName().c_str());
 	EXPECT_STREQ("/node2_markers", MM5.getTopicName().c_str());
-	EXPECT_STREQ("/marker_manager_test/vis_marker_array", MM6.getTopicName().c_str());
-	EXPECT_STREQ("/marker_manager_test/markers", MM7.getTopicName().c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/vis_marker_array", MM6.getTopicName().c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/markers", MM7.getTopicName().c_str());
 
 	// Test the publish interval
 	EXPECT_EQ(1, MM1.getPublishInterval());
@@ -108,11 +108,11 @@ TEST(MarkersTest, test_GenMarker)
 	EXPECT_STREQ("/map", GM5.marker.header.frame_id.c_str());
 
 	// Test the generic marker namespace naming
-	EXPECT_STREQ("/marker_manager_test", GM1.marker.ns.c_str());
-	EXPECT_STREQ("/marker_manager_test", GM2.marker.ns.c_str());
-	EXPECT_STREQ("/marker_manager_test", GM3.marker.ns.c_str());
-	EXPECT_STREQ("/marker_manager_test", GM4.marker.ns.c_str());
-	EXPECT_STREQ("/marker_manager_test/my_ns", GM5.marker.ns.c_str());
+	EXPECT_STREQ("/myns/marker_manager_test", GM1.marker.ns.c_str());
+	EXPECT_STREQ("/myns/marker_manager_test", GM2.marker.ns.c_str());
+	EXPECT_STREQ("/myns/marker_manager_test", GM3.marker.ns.c_str());
+	EXPECT_STREQ("/myns/marker_manager_test", GM4.marker.ns.c_str());
+	EXPECT_STREQ("/myns/marker_manager_test/my_ns", GM5.marker.ns.c_str());
 
 	// Test the internal ID numbers
 	EXPECT_EQ(1, GM1.marker.id);

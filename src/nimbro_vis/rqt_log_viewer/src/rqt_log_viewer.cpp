@@ -3,7 +3,7 @@
 
 #include "rqt_log_viewer.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include <ros/node_handle.h>
 

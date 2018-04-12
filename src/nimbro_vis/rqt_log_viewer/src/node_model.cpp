@@ -13,6 +13,13 @@
 
 #include <boost/foreach.hpp>
 
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+#define TOP_LEVEL_ID ((quintptr)-1)
+#else
+#define TOP_LEVEL_ID (-1)
+#endif
+
 namespace rqt_log_viewer
 {
 
@@ -148,9 +155,9 @@ void NodeModel::processNodeList(const NodeList& nodes)
 QModelIndex NodeModel::index(int row, int column, const QModelIndex& parent) const
 {
 	if(!parent.isValid())
-		return createIndex(row, column, -1);
+		return createIndex(row, column, TOP_LEVEL_ID);
 
-	if(parent.internalId() != -1)
+	if(parent.internalId() != TOP_LEVEL_ID)
 		return QModelIndex();
 
 	return createIndex(row, column, parent.row());
@@ -158,15 +165,15 @@ QModelIndex NodeModel::index(int row, int column, const QModelIndex& parent) con
 
 QModelIndex NodeModel::parent(const QModelIndex& child) const
 {
-	if(!child.isValid() || child.internalId() < 0)
+	if(!child.isValid() || child.internalId() == TOP_LEVEL_ID)
 		return QModelIndex();
 
-	return createIndex(child.internalId(), 0, -1);
+	return createIndex(child.internalId(), 0, TOP_LEVEL_ID);
 }
 
 int NodeModel::columnCount(const QModelIndex& parent) const
 {
-	if(parent.isValid() && parent.internalId() != -1)
+	if(parent.isValid() && parent.internalId() != TOP_LEVEL_ID)
 		return 0;
 
 	return COL_COUNT;
@@ -176,7 +183,7 @@ int NodeModel::rowCount(const QModelIndex& parent) const
 {
 	if(parent.isValid())
 	{
-		if(parent.internalId() != -1)
+		if(parent.internalId() != TOP_LEVEL_ID)
 			return 0;
 		else
 			return m_nodes[parent.row()].loggers.count();
@@ -215,7 +222,7 @@ Qt::ItemFlags NodeModel::flags(const QModelIndex& index) const
 			ret |= Qt::ItemIsEditable;
 		case COL_SHOW:
 		case COL_LEVEL:
-			if(index.internalId() == -1)
+			if(index.internalId() == TOP_LEVEL_ID)
 				ret |= Qt::ItemIsEditable;
 			break;
 	}
@@ -228,7 +235,7 @@ QVariant NodeModel::data(const QModelIndex& index, int role) const
 	if(index.column() >= COL_COUNT)
 		return QVariant();
 
-	if(index.internalId() == -1)
+	if(index.internalId() == TOP_LEVEL_ID)
 	{
 		if(index.row() >= m_nodes.count())
 			return QVariant();
@@ -295,7 +302,7 @@ bool NodeModel::setData(const QModelIndex& index, const QVariant& value, int rol
 	if(role != Qt::EditRole)
 		return false;
 
-	if(index.internalId() == -1)
+	if(index.internalId() == TOP_LEVEL_ID)
 	{
 		if(index.row() >= m_nodes.count())
 			return false;

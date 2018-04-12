@@ -349,9 +349,8 @@ namespace vis_utils
 		/**
 		* @brief Default constructor
 		*
-		* @param topicName A `std::string` specifying the topic to publish the markers to (Default:
-		* `DEFAULT_TOPICNAME`). If the first character is @c ~ then it is explicitly replaced by the
-		* node name (e.g. @c ~foo becomes @c /node_name/foo) so as to ensure conformance.
+		* @param topicName A resource name specifying the topic to publish the markers to (Default:
+		* `DEFAULT_TOPICNAME`).
 		* @param publishInterval Specifies the rate at which to publish the markers (Default: `1`).
 		* If this parameter is @c n then the markers are only published every `n`-th time.
 		* @param enabled This controls the intial enabled state of the MarkerManager (Default: `true)`.
@@ -366,17 +365,16 @@ namespace vis_utils
 			, IDCount(0)
 		{
 			// Construct the class
-			ros::NodeHandle nh("~");
-			construct(nh, topicName);
+			ros::NodeHandle nhs;
+			construct(nhs, topicName);
 		}
 
 		/**
 		* @brief Constructor with explicit node handle
 		*
 		* @param nh The `ros::NodeHandle` to use for the marker manager.
-		* @param topicName A `std::string` specifying the topic to publish the markers to (Default:
-		* `DEFAULT_TOPICNAME`). If the first character is @c ~ then it is explicitly replaced by the
-		* node name (e.g. @c ~foo becomes @c /node_name/foo) so as to ensure conformance.
+		* @param topicName A resource name specifying the topic to publish the markers to (Default:
+		* `DEFAULT_TOPICNAME`).
 		* @param publishInterval Specifies the rate at which to publish the markers (Default: `1`).
 		* If this parameter is @c n then the markers are only published every `n`-th time.
 		* @param enabled This controls the intial enabled state of the MarkerManager (Default: `true)`.
@@ -398,23 +396,13 @@ namespace vis_utils
 		// Constructor function
 		void construct(ros::NodeHandle& nh, const std::string& topicName)
 		{
-			// Save the topic name
+			// Resolve and save the topic name
 			itopicName = topicName;
+			if(itopicName.empty() || itopicName == "~") itopicName = DEFAULT_TOPICNAME;
+			itopicName = ros::names::resolve(nh.getNamespace(), itopicName);
+			if(itopicName.empty()) itopicName = ros::names::resolve(nh.getNamespace(), DEFAULT_TOPICNAME);;
 
-			// Verify that the topic name is valid
-			std::string errStr;
-			if(!ros::names::validate(itopicName, errStr))
-			{
-				ROS_WARN_STREAM("Invalid topic name '" << itopicName << "', using '" << DEFAULT_TOPICNAME << "' instead!");
-				ROS_WARN_STREAM("Details: " << errStr);
-				itopicName = DEFAULT_TOPICNAME;
-			}
-
-			// Replace the ~ character explicitly to ensure naming convention is consistent across utilities
-			if(itopicName.empty() || itopicName == "~" || itopicName == "/") itopicName = DEFAULT_TOPICNAME;
-			if(itopicName.at(0) == '~') itopicName.replace(0, 1, ros::this_node::getName() + "/");
-
-			// Advertise on the plot topic
+			// Advertise on the marker topic
 			m_pub_markers = nh.advertise<visualization_msgs::MarkerArray>(itopicName, 1);
 
 			// Error checking on the downsample rate

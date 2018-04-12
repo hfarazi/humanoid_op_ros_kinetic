@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 	usleep(500000);
 
 	// Create a marker manager
-	MarkerManager MM("~/markers");
+	MarkerManager MM("~markers");
 
 	// Variables
 	int index[3] = {12, 18, 9};

@@ -5,8 +5,8 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
 
 #include <QtDBus/QDBusInterface>

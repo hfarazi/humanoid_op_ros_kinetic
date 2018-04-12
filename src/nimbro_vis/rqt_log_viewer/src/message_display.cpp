@@ -3,9 +3,16 @@
 
 #include "message_display.h"
 
-#include <QtGui/QTextDocument>
-#include <QtGui/QApplication>
-#include <QtGui/QToolButton>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+#define QT_ESCAPE(string) (QString((string)).toHtmlEscaped())
+#else
+#define QT_ESCAPE(string) (Qt::escape((string)))
+#endif
+
+#include <QTextDocument>
+#include <QApplication>
+#include <QToolButton>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
@@ -44,11 +51,11 @@ void MessageDisplay::displayMessage(const rosgraph_msgs::Log& msg)
 		+ QString::number(msg.header.stamp.toSec(), 'f', 3)
 		+ " (" + QString::fromStdString(boost::posix_time::to_simple_string(local_adj::utc_to_local(msg.header.stamp.toBoost()))) + ")</td></tr>";
 
-	html += "<tr><td><b>Text: </b></td><td><pre>" + Qt::escape(QString::fromStdString(msg.msg)) + "</pre></td></tr>";
+	html += "<tr><td><b>Text: </b></td><td><pre>" + QT_ESCAPE(QString::fromStdString(msg.msg)) + "</pre></td></tr>";
 
-	html += "<tr><td><b>Node: </b></td><td>" + Qt::escape(QString::fromStdString(msg.name)) + "</td></tr>";
+	html += "<tr><td><b>Node: </b></td><td>" + QT_ESCAPE(QString::fromStdString(msg.name)) + "</td></tr>";
 
-	html += "<tr><td><b>Src: </b></td><td>" + Qt::escape(QString::fromStdString(msg.file) + ":" + QString::number(msg.line)) + "</td></tr>";
+	html += "<tr><td><b>Src: </b></td><td>" + QT_ESCAPE(QString::fromStdString(msg.file) + ":" + QString::number(msg.line)) + "</td></tr>";
 
 	html += "</body></html>";
 

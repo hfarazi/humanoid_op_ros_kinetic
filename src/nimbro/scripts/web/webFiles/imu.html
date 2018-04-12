@@ -1,0 +1,311 @@
+$def with (menuBar,ip,formp)
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="/static/rosjs/three.min.js"></script>
+<script type="text/javascript" src="/static/rosjs/eventemitter2.min.js"></script>
+<script type="text/javascript" src="/static/rosjs/roslib.min.js"></script>
+<script type="text/javascript" src="/static/rosjs/ros3d.min.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style type="text/css">
+#modalContainer {
+	background-color: transparent;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 10000;
+	/*background-image: url(tp.png);
+	 required by MSIE to prevent actions on lower z-index elements */
+}
+
+#alertBox {
+	position: relative;
+	width: 400px;
+	min-height: 400px;
+	margin-top: 50px;
+	border: 2px solid #000;
+	background-color: #F2F5F6;
+	background-image: url(/imgs/alert.png);
+	background-repeat: no-repeat;
+	background-position: 20px 30px;
+}
+
+#modalContainer>#alertBox {
+	position: fixed;
+}
+
+#alertBox h1 {
+	margin: 0;
+	font: bold 0.9em verdana, arial;
+	background-color: #666699;
+	color: #FFF;
+	border-bottom: 1px solid #000;
+	padding: 2px 0 2px 5px;
+}
+
+#alertBox p {
+	font: 0.7em verdana, arial;
+	height: 50px;
+	padding-left: 5px;
+	margin-left: 55px;
+}
+
+#alertBox #closeBtn {
+	display: block;
+	position: relative;
+	margin: 10px auto;
+	padding: 3px;
+	border: 2px solid #000;
+	width: 70px;
+	font: 0.7em verdana, arial;
+	text-transform: uppercase;
+	text-align: center;
+	color: #FFF;
+	background-color: #003300;
+	text-decoration: none;
+}
+
+#cancelBtn {
+	display: block;
+	position: relative;
+	margin: 3px auto;
+	padding: 3px;
+	border: 2px solid #000;
+	width: 70px;
+	font: 0.7em verdana, arial;
+	text-transform: uppercase;
+	text-align: center;
+	color: #FFF;
+	background-color: #4d001f;
+	text-decoration: none;
+}
+</style>
+<script type="text/javascript" type="text/javascript">
+	/**
+	 * Setup all visualization elements when the page is loaded.
+	 */
+	function init() {
+		// Connect to ROS.
+		var ros = new ROSLIB.Ros({
+			url : 'ws://$ip:9090'
+		});
+
+		// Create the main viewer.
+		var viewer = new ROS3D.Viewer({
+			divID : 'markers',
+			width : 800,
+			height : 600,
+			background : '#bfbfbf',
+			antialias : true
+		});
+		viewer.addObject(new ROS3D.Grid());
+
+		// Setup a client to listen to TFs.
+		var tfClient = new ROSLIB.TFClient({
+			ros : ros,
+			angularThres : 0.01,
+			transThres : 0.01,
+			rate : 10.0,
+			fixedFrame : '/ego_floor'
+		});
+
+		// Setup the marker client.
+		var markerClient = new ROS3D.MarkerArrayClient({
+			ros : ros,
+			tfClient : tfClient,
+			topic : '/robotcontrol/mag_calib_data',
+			rootObject : viewer.scene
+		});
+
+	}
+</script>
+<script type="text/javascript">
+	var ALERT_TITLE = "Attention";
+
+	if (document.getElementById) {
+		window.alert = function(txt) {
+			createCustomAlert(txt);
+		}
+	}
+
+	function createCustomAlert(txt) {
+		d = document;
+
+		if (d.getElementById("modalContainer"))
+			return;
+
+		mObj = d.getElementsByTagName("body")[0].appendChild(d
+				.createElement("div"));
+		mObj.id = "modalContainer";
+		mObj.style.height = d.documentElement.scrollHeight + "px";
+
+		alertObj = mObj.appendChild(d.createElement("div"));
+		alertObj.id = "alertBox";
+		if (d.all && !window.opera)
+			alertObj.style.top = document.documentElement.scrollTop + "px";
+		alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)
+				/ 2 + "px";
+		alertObj.style.visiblity = "visible";
+
+		h1 = alertObj.appendChild(d.createElement("h1"));
+		h1.appendChild(d.createTextNode(ALERT_TITLE));
+
+		msg = alertObj.appendChild(d.createElement("p"));
+		//msg.appendChild(d.createTextNode(txt));
+		msg.innerHTML = txt;
+
+		btn = alertObj.appendChild(d.createElement("a"));
+		btn.id = "closeBtn";
+		btn.appendChild(d.createTextNode("OK"));
+		btn.href = "#";
+		btn.focus();
+		btn.onclick = function() {
+			removeCustomAlert();
+			return false;
+		}
+
+		alertObj.style.display = "block";
+
+	}
+
+	function removeCustomAlert() {
+		document.getElementsByTagName("body")[0].removeChild(document
+				.getElementById("modalContainer"));
+	}
+</script>
+
+<title>IMU Calibrator</title>
+
+
+<script type="text/javascript" src="/static/jquery.js"></script>
+
+<script type="text/javascript">
+	function loadNowPlaying2() {
+		jQuery("#box").load("/show_heading");
+	}
+	setInterval(function() {
+		loadNowPlaying2()
+	}, 300);
+</script>
+</head>
+
+<body onload="init()">
+	$:menuBar
+	<div id="markers"></div>
+
+	<script>
+		var myTimer;
+		var mycounter = 6;
+		var myFuncIsRunning=false;
+		
+		function startsetzero(){
+			if(myFuncIsRunning==false)
+			{
+				myFuncIsRunning=true;
+				setzero();
+			}
+			else
+			{
+				mycounter = 6;
+			}
+		}
+			
+		function setzero() {
+			
+			document.getElementById('btn4').innerHTML = "Wait ("
+					+ mycounter.toString() + ")";
+			if(mycounter%2==0)
+				{
+				document.getElementById("btn4").style.color = "red";
+				}
+			else
+				{
+				document.getElementById("btn4").style.color = "initial";
+				}
+			myTimer = setTimeout(function() {
+				if (mycounter > 0) {
+					mycounter--;
+					setzero();
+				} else {
+					mycounter = 6;
+					document.getElementById('btn4').innerHTML="Set Zero";
+					document.getElementById("btn4").style.color = "initial";
+					clearTimeout(myTimer);
+					loadXMLDoc('4');
+					myFuncIsRunning=false;
+				}
+			}, 1000);
+		}
+
+		function loadXMLDoc(txt) {
+			var xmlhttp;
+			if (window.XMLHttpRequest) {
+				xmlhttp = new XMLHttpRequest();
+			} else {
+				// code for older browsers
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					document.getElementById("demo").innerHTML = xmlhttp.responseText;
+				}
+			};
+			xmlhttp.open("GET", "http://$ip:8080/callservice?id=" + txt, false);
+			xmlhttp.send();
+			alert(xmlhttp.responseText);
+		}
+	</script>
+	<a id="myLink45" title="service call 45" href="#"
+		onclick="loadXMLDoc('5_45');return false;"><img src="/imgs/45.png"
+		alt="45"></a>
+	<a id="myLink0" title="service call 0" href="#"
+		onclick="loadXMLDoc('5_0');return false;"><img src="/imgs/0.png"
+		alt="0"></a>
+	<a id="myLink315" title="service call 315" href="#"
+		onclick="loadXMLDoc('5_315');return false;"><img
+		src="/imgs/315.png" alt="315"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button onclick="loadXMLDoc('1')">Start Calibration</button>
+	&nbsp;
+	<button onclick="loadXMLDoc('2')">Stop2D</button>
+	&nbsp;
+	<button onclick="loadXMLDoc('3')">Stop3D</button>
+	&nbsp;
+	<button id="btn4" onclick="startsetzero()">Set Zero</button>
+	&nbsp;
+	<button onclick="loadXMLDoc('6')">Show calib</button>
+	<br>
+
+	<a id="myLink90" title="service call 90" href="#"
+		onclick="loadXMLDoc('5_90');return false;"><img src="/imgs/90.png"
+		alt="90"></a>
+	<img src="/imgs/center.png" alt="Center">
+	<a id="myLink270" title="service call 270" href="#"
+		onclick="loadXMLDoc('5_270');return false;"><img
+		src="/imgs/270.png" alt="270"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button onclick="loadXMLDoc('10')" style="color:red">G Calib Start H</button>
+	&nbsp;	<button onclick="loadXMLDoc('11')" style="color:Green">G Calib Start L</button>
+	&nbsp;	<button onclick="loadXMLDoc('12')">G Calib Return</button>
+	&nbsp;	<button onclick="loadXMLDoc('13')">G Calib Stop</button>
+	&nbsp;
+	<br>
+
+	<a id="myLink135" title="service call 135" href="#"
+		onclick="loadXMLDoc('5_135');return false;"><img
+		src="/imgs/135.png" alt="135"></a>
+	<a id="myLink180" title="service call 180" href="#"
+		onclick="loadXMLDoc('5_180');return false;"><img
+		src="/imgs/180.png" alt="180"></a>
+	<a id="myLink225" title="service call 225" href="#"
+		onclick="loadXMLDoc('5_225');return false;"><img
+		src="/imgs/225.png" alt="225"></a> &nbsp;&nbsp;
+	<button onclick="loadXMLDoc('7')">Reset Warp</button>
+	<div id="myDiv" class="lower">
+		<div id="box" class="box"></div>
+	</div>
+
+</body>
+</html>

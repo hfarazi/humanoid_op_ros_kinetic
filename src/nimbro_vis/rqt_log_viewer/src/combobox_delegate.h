@@ -4,7 +4,7 @@
 #ifndef COMBOBOX_DELEGATE_H
 #define COMBOBOX_DELEGATE_H
 
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 
 class ComboBoxDelegate : public QStyledItemDelegate
 {

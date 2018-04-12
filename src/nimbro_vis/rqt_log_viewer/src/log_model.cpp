@@ -3,7 +3,7 @@
 
 #include <QtCore/QTimer>
 
-#include <QtGui/QColor>
+#include <QColor>
 
 #include "log_model.h"
 
@@ -157,13 +157,13 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
 		{
 			case rosgraph_msgs::Log::FATAL:
 			case rosgraph_msgs::Log::ERROR:
-				return Qt::red;
+				return QColor(Qt::red);
 			case rosgraph_msgs::Log::WARN:
 				return QVariant::fromValue(QColor(178, 104, 24));
 			case rosgraph_msgs::Log::INFO:
-				return Qt::black;
+				return QColor(Qt::black);
 			case rosgraph_msgs::Log::DEBUG:
-				return Qt::green;
+				return QColor(Qt::green);
 		}
 
 		return QVariant();
