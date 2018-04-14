@@ -10,3 +10,5 @@ For online release documentation please refer to:
 http://nimbro.net/OP/Doc/html
 
 ![Analytics](https://ga-beacon.appspot.com/UA-85678594-1/chromeskel_a/readme?pixel)
+
+Please note that it is not complete yet.
